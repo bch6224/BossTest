@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DragonMoveMent : MonoBehaviour
+public class FollowDragonSystem : MonoBehaviour
 {
     #region º¯¼ö
     [SerializeField] private float moveInterval;
-    [SerializeField] private float moveSpeed;
-    [SerializeField] private List<Transform> movePosList = new();
+    [SerializeField] private float followSpeed;
     private Transform[] bodys;
     #endregion
 
@@ -18,24 +17,20 @@ public class DragonMoveMent : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Move();
+        BossAnim();
     }
 
-    private void Move()
+    private void BossAnim()
     {
         for (int i = bodys.Length - 1; i > 1; i--)
         {
             Vector3 childPos = bodys[i].position;
             Vector3 parentsPos = bodys[i - 1].position;
 
-            Vector3 dir = childPos - parentsPos;
-            dir.Normalize();
-            //Debug.Log(Vector3.Distance(bodys[i].position, bodys[i - 1].position));
-
             if (Vector3.Distance(childPos, parentsPos) > moveInterval)
             {
                 bodys[i].transform.LookAt(parentsPos);
-                bodys[i].position = Vector3.Lerp(childPos, parentsPos, moveSpeed * Time.deltaTime);
+                bodys[i].position = Vector3.Lerp(childPos, parentsPos, followSpeed * Time.deltaTime);
             }
 
         }
