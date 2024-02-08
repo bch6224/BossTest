@@ -4,7 +4,20 @@ using UnityEngine;
 
 public class Boss : Unit
 {
-    [SerializeField] protected List<AttackData> attackDatas = new();
+    [SerializeField] protected List<BossPatternData> bossPatternData = new();
+    protected Animator anim;
+    protected void Awake()
+    {
+        anim = GetComponent<Animator>();
+    }
+}
+
+[System.Serializable]
+public class BossPatternData
+{
+    public AttackData attackData;
+    public GameObject danger;
+    public List<Transform> movePos = new();
 }
 
 [System.Serializable]

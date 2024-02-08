@@ -4,68 +4,51 @@ using UnityEngine;
 
 public class Dragon : Boss
 {
-    [SerializeField] private GameObject head;
-    [Range(0, 10)]
+    private const string HorizontalAttack = "HorizontalAttack";
+    [SerializeField] private Transform head;
+    [Range(0, 100)]
     [SerializeField] private float moveSpeed;
-    [SerializeField] private List<Transform> movePos = new();
-    [SerializeField] private List<Vector3> attackRange = new();
-
-    [SerializeField] private float moveWaitTime;
-    private WaitForSeconds moveWait;
-
-    [SerializeField] private GameObject danger;
 
     protected override void Start()
     {
         base.Start();
-        moveWait = new WaitForSeconds(moveWaitTime);
         StartCoroutine(nameof(BossPattern));
     }
 
-    private void OnDrawGizmos()
+    private void FixedUpdate()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(transform.position, attackRange[0]);
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+        head.transform.Translate(new Vector3(-h, v, 0) * Time.deltaTime * moveSpeed);
     }
 
     private IEnumerator BossPattern()
     {
-        //while (true)
-        //{
-        yield return StartCoroutine(HorizontalAttack());
-        //}
+        StartCoroutine(nameof(HorizontalAttackPattern));
+        yield return null;
     }
 
-    private IEnumerator HorizontalAttack()
+    IEnumerator HorizontalAttackPattern()
     {
-        Debug.Log("HorizontalAttack");
-        GameObject spawnDanger = Instantiate(danger);
-        spawnDanger.transform.position = transform.position;
-        spawnDanger.transform.localScale = attackRange[0];
-        yield return moveWait;
-
-        float t = 0;
-
-        Vector3 currentPos = head.transform.position;
+        //GameObject dangerObject1 = Instantiate(bossPatternData[0].danger);
+        //GameObject dangerObject2 = Instantiate(bossPatternData[0].danger);
+        //dangerObject2.transform.position = new Vector3(0, 0, -3);
+        //WaitForSeconds attackWait = new(2);
+        //yield return attackWait;
+        //Destroy(dangerObject1);
+        //Destroy(dangerObject2);
 
         while (true)
         {
-            float time = t / moveSpeed;
-            for (int i = 0; i < movePos.Count - 1; i++)
+            for (int i = 0; i <= bossPatternData[0].movePos.Count - 1; i++)
             {
-                Vector3 nextPos = movePos[i + 1].position;
-                if (Vector3.Distance(transform.position, nextPos) > 0.5f)
+                Debug.Log(i);
+                if (Vector3.Distance(head.transform.position, bossPatternData[0].movePos[i].position) > 0.5f)
                 {
-                    head.transform.position = Vector3.Lerp(currentPos, nextPos, time);
-                    t += Time.deltaTime;
+                    head.transform.position = Vector3.Lerp(head.transform.position, bossPatternData[0].movePos[i].position, Time.deltaTime * moveSpeed);
                     yield return null;
                 }
-                else
-                {
-                    currentPos = movePos[i].position;
-                }
             }
-            yield return null;
         }
     }
 }

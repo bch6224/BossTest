@@ -6,14 +6,10 @@ public class FollowDragonSystem : MonoBehaviour
 {
     #region º¯¼ö
     [SerializeField] private float moveInterval;
+    [Range(0, 50)]
     [SerializeField] private float followSpeed;
-    private Transform[] bodys;
+    [SerializeField] private Transform[] bodys;
     #endregion
-
-    private void Awake()
-    {
-        bodys = GetComponentsInChildren<Transform>();
-    }
 
     private void FixedUpdate()
     {
@@ -22,17 +18,17 @@ public class FollowDragonSystem : MonoBehaviour
 
     private void BossAnim()
     {
-        for (int i = bodys.Length - 1; i > 1; i--)
+        for (int i = 0; i < bodys.Length - 1; i++)
         {
-            Vector3 childPos = bodys[i].position;
-            Vector3 parentsPos = bodys[i - 1].position;
+            Vector3 parentPos = bodys[i].position;
+            Vector3 childPos = bodys[i + 1].position;
 
-            if (Vector3.Distance(childPos, parentsPos) > moveInterval)
+            //bodys[i + 1].transform.LookAt(parentPos);
+            //bodys[i + 1].transform.eulerAngles = new Vector3(transform.eulerAngles.x - 90, transform.eulerAngles.y - 90, transform.eulerAngles.z);
+            if (Vector3.Distance(parentPos, childPos) > moveInterval)
             {
-                bodys[i].transform.LookAt(parentsPos);
-                bodys[i].position = Vector3.Lerp(childPos, parentsPos, followSpeed * Time.deltaTime);
+                bodys[i + 1].position = Vector3.Lerp(parentPos, childPos, followSpeed * Time.deltaTime);
             }
-
         }
     }
 }
